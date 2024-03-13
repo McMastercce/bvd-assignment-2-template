@@ -7,6 +7,7 @@ interface Book {
 };
 
 async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promise<Book[]>{
+    // We want to generate the query string to match the format expected by qs: https://www.npmjs.com/package/qs
     let query = filters?.map(({from, to}, index) => {
         let result = "";
         if (from) {
@@ -17,8 +18,12 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
         }
         return result;
     }).join("&") ?? "";
+
+    // We then make the request
     let result = await fetch(`http://localhost:3000/books?${query}`);
+
     if (result.ok) {
+        // And if it is valid, we parse the JSON result and return it.
         return await result.json();
     } else {
         throw new Error("Failed to fetch books");
