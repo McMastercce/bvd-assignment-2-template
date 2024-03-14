@@ -11,10 +11,10 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
     let query = filters?.map(({from, to}, index) => {
         let result = "";
         if (from) {
-            result += `&filter[${index}][from]=${from}`;
+            result += `&filters[${index}][from]=${from}`;
         }
         if (to) {
-            result += `&filter[${index}][to]=${to}`
+            result += `&filters[${index}][to]=${to}`
         }
         return result;
     }).join("&") ?? "";

@@ -18,13 +18,13 @@ app.get("/books",
 // We are using zod and zod-express-middleware to validate that our query string is correct, and if not
 // it will reject the request.
     validateRequest({
-        query: z.object({ filter: z.object({
+        query: z.object({ filters: z.object({
             from: z.number().optional(),
             to: z.number().optional()
         }).array().optional()
     })
 }), (req, res) => {
-    let filters = req.query['filter'];
+    let filters = req.query['filters'];
 
     // If there are no filters we can return the list directly
     if (!filters || filters.length === 0) {
