@@ -1,26 +1,23 @@
 import express from "express";
 import book_list from "./mcmasteful-book-list.json";
 import { z } from "zod"
-import { validateRequest } from "zod-express-middleware";
-import queryType from "query-types";
+import { processRequest } from "zod-express-middleware";
 import cors from "cors";
 
 const app = express();
 
 // Setting up to use express JSON for the body
 app.use(express.json());
-// We use the queryType middleware to ensure our query strings are fully parsed.
-app.use(queryType.middleware())
 // And we add cors to ensure we can access our API from the mcmasterful-books website
 app.use(cors())
 
 app.get("/books",
 // We are using zod and zod-express-middleware to validate that our query string is correct, and if not
 // it will reject the request.
-    validateRequest({
+    processRequest({
         query: z.object({ filters: z.object({
-            from: z.number().optional(),
-            to: z.number().optional()
+            from: z.coerce.number().optional(),
+            to: z.coerce.number().optional()
         }).array().optional()
     })
 }), (req, res) => {
