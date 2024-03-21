@@ -26,6 +26,7 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
         // And if it is valid, we parse the JSON result and return it.
         return (await result.json() as Book[]);
     } else {
+        console.log("Failed to fetch books: ", await result.text())
         throw new Error("Failed to fetch books");
     }
 }
