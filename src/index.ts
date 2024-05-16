@@ -1,4 +1,4 @@
-import book_list from "./mcmasteful-book-list.json";
+import book_list from "../mcmasteful-book-list.json";
 import { z } from "zod"
 import Koa from "koa";
 import cors from "@koa/cors";
