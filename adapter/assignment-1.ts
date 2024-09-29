@@ -7,7 +7,7 @@ export interface Book {
 };
 
 async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promise<Book[]>{
-    // We want to generate the query string to match the format expected by qs: https://www.npmjs.com/package/qs
+    console.log("function listBooks with filter", filters);
     let query = filters?.map(({from, to}, index) => {
         let result = "";
         if (from) {

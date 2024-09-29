@@ -1,9 +1,10 @@
-import book_list from "../mcmasteful-book-list.json";
-import { z } from "zod"
 import Koa from "koa";
 import cors from "@koa/cors";
 import zodRouter from 'koa-zod-router';
 import qs from "koa-qs";
+import books_list from "./books/list";
+import create_or_update_book from "./books/create_or_update";
+import delete_book from "./books/delete";
 
 const app = new Koa();
 
@@ -16,51 +17,15 @@ app.use(cors())
 
 const router = zodRouter();
 
-router.register({
-    name: "list books",
-    method: "get",
-    path: "/books",
-    validate: {
-        query: z.object({ filters: z.object({
-            from: z.coerce.number().optional(),
-            to: z.coerce.number().optional()
-        }).array().optional()
-    })
-    },
-    handler: async (ctx, next) => {
-        const { filters } = ctx.request.query;
-        
-        // If there are no filters we can return the list directly
-        if (!filters || filters.length === 0) {
-            ctx.body = book_list;
-            await next();
-            return;
-        }
+// Setup Book List Route
+books_list(router);
 
-        // We can use a record to prevent duplication - so if the same book is valid from multiple sources
-        // it'll only exist once in the record.
-        // We set the value to "true" because it makes checking it later when returning the result easy.
-        let filtered : Record<number, true> = {};
+// Setup Book Create Route
+create_or_update_book(router);
 
-        for (let {from, to} of filters) {
-            for (let [index, { price }] of book_list.entries()) {
-                let matches = true;
-                if (from && price < from) {
-                    matches = false;
-                }
-                if (to && price > to) {
-                    matches = false;
-                }
-                if (matches) {
-                    filtered[index] = true;
-                }
-            }
-        }
+// Setup Book Delete Route
+delete_book(router);
 
-        ctx.body = book_list.filter((book, index) => filtered[index] === true);
-        await next();
-    }
-});
 
 app.use(router.routes());
 

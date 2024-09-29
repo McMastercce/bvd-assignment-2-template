@@ -4,6 +4,13 @@ services:
   dev:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm
     user: root
+    ports:
+      - "3000:3000"
+      - "9080:9080"
     volumes:
-      - ../..:/workspaces:cached
+      - ..:/workspace:cached
     command: sleep infinity
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"

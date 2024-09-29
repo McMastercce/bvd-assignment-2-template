@@ -15,14 +15,27 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
     return assignment1.listBooks(filters);
 }
 
+
 async function createOrUpdateBook(book: Book): Promise<BookID> {
-    throw new Error("Todo")
+    let result = await fetch(`http://localhost:3000/books`, { method: "POST", body: JSON.stringify(book), headers: {
+        "Content-Type": "application/json"
+    } });
+
+    if (result.ok) {
+        let res = await result.json() as { id: BookID };
+        return res.id;
+    } else {
+        throw new Error("Failed to create or update book");
+    }
 }
 
 async function removeBook(book: BookID): Promise<void> {
-    throw new Error("Todo")
-}
+    let result = await fetch(`http://localhost:3000/books/${book}`, { method: "DELETE"});
 
+    if (!result.ok) {
+        throw new Error("Failed to create or update book");
+    }
+}
 const assignment = "assignment-2";
 
 export default {
