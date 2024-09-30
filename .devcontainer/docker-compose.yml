@@ -5,7 +5,6 @@ services:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm
     user: root
     ports:
-      - "3000:3000"
       - "9080:9080"
     volumes:
       - ..:/workspace:cached
