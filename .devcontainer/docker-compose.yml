@@ -11,5 +11,3 @@ services:
     command: sleep infinity
   mongo:
     image: mongo:latest
-    ports:
-      - "27017:27017"
