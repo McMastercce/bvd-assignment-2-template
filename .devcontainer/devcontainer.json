@@ -8,6 +8,7 @@
 		"ghcr.io/devcontainers-contrib/features/tsx:1": {},
 		"ghcr.io/mcmastercce/bvd-103-mcmasterful-books/mcmasterful-books:latest": {}
 	},
+	"workspaceFolder": "/workspace",
 	"customizations": {
 		"vscode": {
 			"extensions": [
