@@ -14,7 +14,7 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
             result += `&filters[${index}][from]=${from}`;
         }
         if (to) {
-            result += `&filters[${index}][to]=${to}`
+            result += `&filters[${index}][to]="max"`
         }
         return result;
     }).join("&") ?? "";

@@ -1,12 +1,13 @@
 
 # @name createBook
 POST http://localhost:3000/books
+Content-Type: application/json
 
 {
   "name": "The Great Gatsby",
   "author": "F. Scott Fitzgerald",
   "description": "A novel about the American Dream",
-  "price": 55.99,
+  "price": 55,
   "image": "https://example.com/great-gatsby.jpg"
 }
 

@@ -1,10 +1,7 @@
 import Koa from "koa";
 import cors from "@koa/cors";
-import zodRouter from 'koa-zod-router';
 import qs from "koa-qs";
-import books_list from "./books/list";
-import create_or_update_book from "./books/create_or_update";
-import delete_book from "./books/delete";
+import booksRouters from "./books/routes";
 
 const app = new Koa();
 
@@ -12,22 +9,17 @@ const app = new Koa();
 qs(app);
 
 // And we add cors to ensure we can access our API from the mcmasterful-books website
-app.use(cors())
+app.use(cors({
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  maxAge: 5,
+  credentials: true
+}))
 
-
-const router = zodRouter();
-
-// Setup Book List Route
-books_list(router);
-
-// Setup Book Create Route
-create_or_update_book(router);
-
-// Setup Book Delete Route
-delete_book(router);
-
-
-app.use(router.routes());
+app.use(booksRouters.routes());
+app.use(booksRouters.allowedMethods());
 
 app.listen(3000, () => {
     console.log("listening!")
