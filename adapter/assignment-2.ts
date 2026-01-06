@@ -16,43 +16,41 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
 }
 
 async function createOrUpdateBook(book: Book): Promise<BookID> {
-    let url = 'http://localhost:3000/books';
-    let method = 'POST';
+    // TODO: Implement this function to create or update a book via the API
+    //
+    // Requirements:
+    // - If the book has an id, send a PUT request to update the existing book
+    //   URL: http://localhost:3000/books/{id}
+    // - If the book does not have an id, send a POST request to create a new book
+    //   URL: http://localhost:3000/books
+    // - Send the book data as JSON in the request body
+    // - On success, return the book's id from the response
+    // - On failure, throw an Error with a descriptive message
+    //
+    // Hints:
+    // - Use the fetch API to make HTTP requests
+    // - Set the 'Content-Type' header to 'application/json'
+    // - Use JSON.stringify() to convert the book object to a JSON string
+    // - Check result.ok to determine if the request was successful
+    // - Parse the response with result.json() to get the id
 
-    // If book has an id, use PUT to update
-    if (book.id) {
-        url = `http://localhost:3000/books/${book.id}`;
-        method = 'PUT';
-    }
-
-    const result = await fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(book),
-    });
-
-    if (result.ok) {
-        const data = await result.json() as { id: BookID };
-        return data.id;
-    } else {
-        const errorText = await result.text();
-        console.log("Failed to create/update book: ", errorText);
-        throw new Error(`Failed to create/update book: ${errorText}`);
-    }
+    throw new Error("Not implemented");
 }
 
 async function removeBook(bookId: BookID): Promise<void> {
-    const result = await fetch(`http://localhost:3000/books/${bookId}`, {
-        method: 'DELETE',
-    });
+    // TODO: Implement this function to delete a book via the API
+    //
+    // Requirements:
+    // - Send a DELETE request to http://localhost:3000/books/{bookId}
+    // - On success (status 200 or 204), return without throwing
+    // - On failure, throw an Error with a descriptive message
+    //
+    // Hints:
+    // - Use the fetch API with method: 'DELETE'
+    // - A successful delete typically returns status 204 (No Content)
+    // - Check result.ok or result.status to determine success
 
-    if (!result.ok && result.status !== 204) {
-        const errorText = await result.text();
-        console.log("Failed to remove book: ", errorText);
-        throw new Error(`Failed to remove book: ${errorText}`);
-    }
+    throw new Error("Not implemented");
 }
 
 const assignment = "assignment-2";

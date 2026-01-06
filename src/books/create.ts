@@ -14,149 +14,74 @@ interface BookInput {
 }
 
 function validateBookInput(body: any): { valid: boolean; error?: string; book?: BookInput } {
-    if (!body || typeof body !== 'object') {
-        return { valid: false, error: 'Request body must be a JSON object' };
-    }
+    // TODO: Implement input validation for book data
+    //
+    // Requirements:
+    // - Validate that body is a non-null object
+    // - Validate that 'name' is a non-empty string
+    // - Validate that 'author' is a non-empty string
+    // - Validate that 'description' is a string
+    // - Validate that 'price' is a non-negative number (not NaN)
+    // - Validate that 'image' is a string
+    // - Return { valid: false, error: "descriptive message" } for invalid input
+    // - Return { valid: true, book: { ... } } for valid input
+    //
+    // Hints:
+    // - Use typeof to check types
+    // - Use string.trim() to check for empty strings
+    // - Use isNaN() to check for NaN values
+    // - The 'id' field is optional and should be passed through if present
 
-    const { id, name, author, description, price, image } = body;
-
-    if (typeof name !== 'string' || name.trim() === '') {
-        return { valid: false, error: 'Name is required and must be a non-empty string' };
-    }
-
-    if (typeof author !== 'string' || author.trim() === '') {
-        return { valid: false, error: 'Author is required and must be a non-empty string' };
-    }
-
-    if (typeof description !== 'string') {
-        return { valid: false, error: 'Description is required and must be a string' };
-    }
-
-    if (typeof price !== 'number' || isNaN(price) || price < 0) {
-        return { valid: false, error: 'Price is required and must be a non-negative number' };
-    }
-
-    if (typeof image !== 'string') {
-        return { valid: false, error: 'Image is required and must be a string' };
-    }
-
-    return {
-        valid: true,
-        book: {
-            id: id,
-            name: name.trim(),
-            author: author.trim(),
-            description,
-            price,
-            image
-        }
-    };
+    return { valid: false, error: 'Validation not implemented' };
 }
 
 // Create a new book
 createRouter.post('/books', async (ctx) => {
-    try {
-        const validation = validateBookInput(ctx.request.body);
+    // TODO: Implement POST /books endpoint to create a new book
+    //
+    // Requirements:
+    // - Validate the request body using validateBookInput()
+    // - If validation fails, return status 400 with { error: "message" }
+    // - If book.id is provided:
+    //   - Validate that it's a valid ObjectId format
+    //   - Use updateOne with upsert: true to create/update the book
+    //   - Return status 200 with { id: book.id }
+    // - If book.id is not provided:
+    //   - Use insertOne to create a new book
+    //   - Return status 201 with { id: insertedId.toString() }
+    // - Handle errors with status 500 and { error: "message" }
+    //
+    // Hints:
+    // - Use getDatabase() to get the database instance
+    // - Use ObjectId.isValid() to validate ObjectId format
+    // - Use new ObjectId(id) to convert string to ObjectId
+    // - Access the 'books' collection with db.collection('books')
 
-        if (!validation.valid) {
-            ctx.status = 400;
-            ctx.body = { error: validation.error };
-            return;
-        }
-
-        const book = validation.book!;
-        const db = getDatabase();
-
-        // If id is provided, this is an update (upsert)
-        if (book.id) {
-            if (!ObjectId.isValid(book.id)) {
-                ctx.status = 400;
-                ctx.body = { error: 'Invalid book ID format' };
-                return;
-            }
-
-            const result = await db.collection('books').updateOne(
-                { _id: new ObjectId(book.id) },
-                {
-                    $set: {
-                        name: book.name,
-                        author: book.author,
-                        description: book.description,
-                        price: book.price,
-                        image: book.image
-                    }
-                },
-                { upsert: true }
-            );
-
-            ctx.status = 200;
-            ctx.body = { id: book.id };
-        } else {
-            // Create new book
-            const result = await db.collection('books').insertOne({
-                name: book.name,
-                author: book.author,
-                description: book.description,
-                price: book.price,
-                image: book.image
-            });
-
-            ctx.status = 201;
-            ctx.body = { id: result.insertedId.toString() };
-        }
-    } catch (error) {
-        ctx.status = 500;
-        ctx.body = { error: `Failed to create/update book: ${error}` };
-    }
+    ctx.status = 501;
+    ctx.body = { error: 'POST /books not implemented' };
 });
 
 // Update an existing book
 createRouter.put('/books/:id', async (ctx) => {
-    try {
-        const { id } = ctx.params;
+    // TODO: Implement PUT /books/:id endpoint to update an existing book
+    //
+    // Requirements:
+    // - Get the id from ctx.params
+    // - Validate that id is a valid ObjectId format (return 400 if not)
+    // - Validate the request body using validateBookInput()
+    // - If validation fails, return status 400 with { error: "message" }
+    // - Use updateOne to update the book (without upsert)
+    // - If no document matched (matchedCount === 0), return status 404
+    // - On success, return status 200 with { id: id }
+    // - Handle errors with status 500 and { error: "message" }
+    //
+    // Hints:
+    // - Use ctx.params.id to get the URL parameter
+    // - Use db.collection('books').updateOne() with $set operator
+    // - Check result.matchedCount to see if a document was found
 
-        if (!ObjectId.isValid(id)) {
-            ctx.status = 400;
-            ctx.body = { error: 'Invalid book ID format' };
-            return;
-        }
-
-        const validation = validateBookInput({ ...ctx.request.body, id });
-
-        if (!validation.valid) {
-            ctx.status = 400;
-            ctx.body = { error: validation.error };
-            return;
-        }
-
-        const book = validation.book!;
-        const db = getDatabase();
-
-        const result = await db.collection('books').updateOne(
-            { _id: new ObjectId(id) },
-            {
-                $set: {
-                    name: book.name,
-                    author: book.author,
-                    description: book.description,
-                    price: book.price,
-                    image: book.image
-                }
-            }
-        );
-
-        if (result.matchedCount === 0) {
-            ctx.status = 404;
-            ctx.body = { error: 'Book not found' };
-            return;
-        }
-
-        ctx.status = 200;
-        ctx.body = { id };
-    } catch (error) {
-        ctx.status = 500;
-        ctx.body = { error: `Failed to update book: ${error}` };
-    }
+    ctx.status = 501;
+    ctx.body = { error: 'PUT /books/:id not implemented' };
 });
 
 export default createRouter;
